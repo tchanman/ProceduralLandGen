@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
-    public Camera cam;
-    Vector3 camOffset = new Vector3(0, 1.5f, -5);
+    public Vector3 cameraOffset;
 
-    public float speed = 10;
+    public float speed;
     Vector3 velocity;
+    public float turnSpeed;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public Camera cam;
+
+    void Start() {
+        speed = 100;
+        turnSpeed = 2;
+        cameraOffset = new Vector3(0, 0, 0);
+
+        transform.position = Vector3.zero;
+        cam.transform.position = transform.position + cameraOffset;
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 direction = input.normalized;
@@ -24,10 +28,22 @@ public class Player : MonoBehaviour {
         velocity = direction * speed * Time.deltaTime;
         transform.position += velocity;
 
-        cam.transform.position = transform.position + camOffset;
-
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            Debug.Log("Jump");
+        if(Input.GetKey(KeyCode.Space)) {
+            transform.position += Vector3.up * speed * Time.deltaTime;
         }
+        if(Input.GetKey(KeyCode.LeftShift)) {
+            transform.position += Vector3.down * speed * Time.deltaTime;
+        }
+
+        if(Input.GetKey(KeyCode.Q)) {
+            transform.Rotate(0, -turnSpeed, 0, Space.World);
+            cam.transform.Rotate(0, -turnSpeed, 0, Space.World);
+        }
+        if(Input.GetKey(KeyCode.E)) {
+            transform.Rotate(0, turnSpeed, 0, Space.World);
+            cam.transform.Rotate(0, turnSpeed, 0, Space.World);
+        }
+
+        cam.transform.position = transform.position + cameraOffset;
     }
 }
